@@ -34,7 +34,13 @@ public class MyUserDetailsService implements UserDetailsService {
         private static final long serialVersionUID = 1L;
 
         private UserRepositoryUserDetails(UserImp user) {
-            super(user);
+//            super(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRoles());
+            super();
+            this.setId(user.getId());
+            this.setName(user.getName());
+            this.setEmail(user.getEmail());
+            this.setPassword(user.getPassword());
+            this.setRoles(user.getRoles());
         }
 
         @Override

@@ -3,7 +3,7 @@ package com.dlucchesi.oauthtest.model.imp;
 import com.dlucchesi.oauthtest.model.Role;
 import com.dlucchesi.oauthtest.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -29,24 +29,4 @@ public class UserImp implements com.dlucchesi.oauthtest.model.User {
     )
     private List<Role> roles;
 
-    public UserImp(String name, String email) {
-        super();
-        this.name = name;
-        this.email = email;
-    }
-    public UserImp(User user) {
-        super();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.roles = user.getRoles();
-        this.id = user.getId();
-    }
-    public UserImp(String name, String email, String password, List<Role> roles) {
-        super();
-        this.name = name;
-        this.email = email;
-        this.roles = roles;
-        this.password = password;
-    }
 }

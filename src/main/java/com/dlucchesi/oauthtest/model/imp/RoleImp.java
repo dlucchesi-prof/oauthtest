@@ -17,10 +17,6 @@ public class RoleImp implements com.dlucchesi.oauthtest.model.Role {
     @Column(name = "name", nullable = false)
     private String name;
 
-    public RoleImp(String name){
-        this.name = name;
-    }
-
     @Override
     public String getAuthority() {
         return null;

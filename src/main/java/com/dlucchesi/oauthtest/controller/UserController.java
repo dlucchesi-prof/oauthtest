@@ -18,6 +18,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -49,6 +51,12 @@ public class UserController {
             @RequestParam("size") int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
         return new ResponseEntity<Page<UserImp>>(userImpRepository.findAll(pageable), HttpStatus.OK);
+    }
+
+    @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    public ResponseEntity<List<UserImp>> list(){
+        return new ResponseEntity<List<UserImp>>(userImpRepository.findAll(), HttpStatus.OK);
     }
 
 }

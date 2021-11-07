@@ -39,10 +39,19 @@ public class DataInitializr implements ApplicationListener<ContextRefreshedEvent
 
     public void createUser(String name, String email, String password, String roleName) {
 
-        RoleImp role = new RoleImp(roleName);
+        RoleImp role = new RoleImp();
+        role.setId(null);
+        role.setName(roleName);
 
         roleImpRepository.save(role);
-        UserImp user = new UserImp(name, email, password, Arrays.asList(role));
+//        UserImp user = new UserImp(null, name, email, password, Arrays.asList(role));
+        UserImp user = new UserImp();
+        user.setId(null);
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setRoles(Arrays.asList(role));
+
         userImpRepository.save(user);
     }
 }
