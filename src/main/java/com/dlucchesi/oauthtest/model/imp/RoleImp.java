@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity(name = "role")
 @Table(name = "role")
 @Data
-public class RoleImp implements com.dlucchesi.oauthtest.model.Role {
+public class RoleImp implements com.dlucchesi.oauthtest.model.Role, GrantedAuthority {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -19,6 +19,6 @@ public class RoleImp implements com.dlucchesi.oauthtest.model.Role {
 
     @Override
     public String getAuthority() {
-        return null;
+        return name;
     }
 }

@@ -2,23 +2,20 @@ package com.dlucchesi.oauthtest.controller;
 
 import com.dlucchesi.oauthtest.model.Const;
 import com.dlucchesi.oauthtest.model.User;
-import com.dlucchesi.oauthtest.model.imp.UserImp;
-import com.dlucchesi.oauthtest.repository.RoleImpRepository;
-import com.dlucchesi.oauthtest.repository.UserImpRepository;
+import com.dlucchesi.oauthtest.service.RoleService;
+import com.dlucchesi.oauthtest.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -26,37 +23,57 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    private final UserImpRepository userImpRepository;
-    private final RoleImpRepository roleImpRepository;
-    private final PasswordEncoder   passwordEncoder;
+    private final UserService   userService;
+    private final RoleService   roleService;
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity<UserImp> save(@RequestBody UserImp user){
-        UserImp ret = userImpRepository.save(user);
-        return new ResponseEntity<UserImp>(ret, HttpStatus.OK);
+    public ResponseEntity<User> save(@RequestBody User user){
+        Optional<User> userOpt = userService.save(user);
+        if (userOpt.isPresent()){
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
     }
 
     @Secured({Const.ROLE_ADMIN})
     @RequestMapping(value = "", method = RequestMethod.PUT)
-    public ResponseEntity<UserImp> edit(@RequestBody UserImp user){
-        user = userImpRepository.save(user);
-        return new ResponseEntity<UserImp>(user, HttpStatus.OK);
+    public ResponseEntity<User> edit(@RequestBody User user){
+        Optional<User> userOpt = userService.save(user);
+        if (userOpt.isPresent()){
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.OK);
+        }
     }
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<Page<UserImp>> list(
+    public ResponseEntity<Page<User>> list(
             @RequestParam("page") int page,
             @RequestParam("size") int size){
         Pageable pageable = PageRequest.of(page, size, Sort.by("name"));
-        return new ResponseEntity<Page<UserImp>>(userImpRepository.findAll(pageable), HttpStatus.OK);
+        Optional<List<User>> userListOpt = userService.find();
+        Page<User> tmpPage = null;
+        if (userListOpt.isPresent()){
+            List<User> userList = userListOpt.get();
+            int start = (userList.size() / size) * page;
+            int end = start + (size - 1);
+            tmpPage = new PageImpl<User>(userList.subList(start, end), pageable, userList.size());
+        }
+        return new ResponseEntity<Page<User>>(tmpPage, HttpStatus.OK);
     }
+
 
     @Secured({Const.ROLE_CLIENT, Const.ROLE_ADMIN})
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public ResponseEntity<List<UserImp>> list(){
-        return new ResponseEntity<List<UserImp>>(userImpRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<User>> list(){
+        Optional<List<User>> userListOpt = userService.find();
+        List<User> userList = Collections.emptyList();
+        if (userListOpt.isPresent()){
+            userList = userListOpt.get();
+        }
+        return new ResponseEntity<List<User>>(userList, HttpStatus.OK);
     }
-
 }

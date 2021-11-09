@@ -1,5 +1,6 @@
 package com.dlucchesi.oauthtest.model.imp;
 
+import com.dlucchesi.oauthtest.model.AuthenticationProvider;
 import com.dlucchesi.oauthtest.model.Role;
 import com.dlucchesi.oauthtest.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;

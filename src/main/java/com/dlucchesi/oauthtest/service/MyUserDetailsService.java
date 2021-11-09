@@ -1,5 +1,6 @@
 package com.dlucchesi.oauthtest.service;
 
+import com.dlucchesi.oauthtest.model.User;
 import com.dlucchesi.oauthtest.model.imp.UserImp;
 import com.dlucchesi.oauthtest.repository.UserImpRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,29 +13,28 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Slf4j
 public class MyUserDetailsService implements UserDetailsService {
 
-    private final UserImpRepository userImpRepository;
+    private final UserService   userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserImp user = userImpRepository.findByEmail(username);
-        if (user == null) {
+        Optional<User> userOpt = userService.findByEmail(username);
+        if (!userOpt.isPresent()) {
             throw new UsernameNotFoundException(String.format("Usuário não existe!", username));
+        } else {
+            return new UserRepositoryUserDetails(userOpt.get());
         }
-        return new UserRepositoryUserDetails(user);
     }
 
     private final static class UserRepositoryUserDetails extends UserImp implements UserDetails {
 
-        private static final long serialVersionUID = 1L;
-
-        private UserRepositoryUserDetails(UserImp user) {
-//            super(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRoles());
+        private UserRepositoryUserDetails(User user) {
             super();
             this.setId(user.getId());
             this.setName(user.getName());
