@@ -9,16 +9,10 @@ security:
   oauth2:
     resource:
       id: bcrypt
-#    client:
-#      registration:
-#        client-id: client
-#        client-secret: 123
-#        scope: password
 
 logging:
   level:
-    root: DEBUG
-    org.springframework.web: INFO
+    root: INFO
     org.hibernate: ERROR
 
 server:
